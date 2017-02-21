@@ -87,7 +87,7 @@ describe('html-to-vdom', function () {
                     return attribs.id;
                 }
             }, html);
-            
+
             should.exist(converted.key);
             converted.key.should.eql('key1');
         });
@@ -102,7 +102,7 @@ describe('html-to-vdom', function () {
 
             var html = '<div id="key1">Test</div>';
             var converted = keyedConvertHTML(html);
-            
+
             should.exist(converted.key);
             converted.key.should.eql('key1');
         });
@@ -158,7 +158,7 @@ describe('html-to-vdom', function () {
     });
 
     describe('when converting HTML containing a directive', function () {
-        it('returns an empty string instead (directives are unsupported)', function () {
+        it('returns an empty VText instead (directives are unsupported)', function () {
             var html = '<!DOCTYPE html>';
             var converted = convertHTML(html);
             converted.text.should.eql('');
@@ -166,11 +166,18 @@ describe('html-to-vdom', function () {
     });
 
     describe('when converting HTML containing a comment', function () {
-        it('returns an empty string instead (comments are unsupported)', function () {
+        it('returns an empty VText instead (comments are unsupported)', function () {
             var html = '<div><!-- some comment --></div>';
             var converted = convertHTML(html);
             var comment = converted.children[0];
             comment.text.should.eql('');
+        });
+
+        it('includes the comment data in an `extended` object so consumers can still use it', function () {
+            var html = '<div><!-- some comment --></div>';
+            var converted = convertHTML(html);
+            var comment = converted.children[0];
+            comment.extended.should.eql({ type: 'comment', data: ' some comment ' });
         });
     });
 });
